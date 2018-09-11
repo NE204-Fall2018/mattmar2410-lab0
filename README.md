@@ -11,7 +11,7 @@ Instructions for running the lab report are posted below:
 
 ## File instructions
 
-## As a user
+## Install all requirements to run the analysis
 
 ```
 pip install -r requirements.txt
