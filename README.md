@@ -11,6 +11,13 @@ Instructions for running the lab report are posted below:
 
 ## File instructions
 
+## As a user
+
+```
+pip install -r requirements.txt
+
+```
+
 ### Downloading the data
 
 Use the makefile to download the data for the lab:
