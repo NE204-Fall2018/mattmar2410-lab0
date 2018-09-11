@@ -36,6 +36,8 @@ channel_width = 7
 clean_left = 0
 clean_right = 150
 
+energy_error_Ba133 = [.0011, .0012, .0005, .0007, .0012]
+
 '''
 The file is generated from the make file.
 '''
@@ -99,12 +101,12 @@ for plotting purposes. All of the peaks are found from the trimmed data
 and the corresponding count rates are found. A list is created and then the
 list is sorted based by the position of the counts.
 '''
-i = 0; channel_max_list = []; energy_list_2 =[]
+i = 0; channel_max_list = []; energy_list_2 =[]; channel_std_list = [];
 gauss_x =[]; gauss_y=[]; fit_channel = []
 
 while i < len(energy_spectrum):
     channel_max = np.argmax(list_data)
-    channel_max_list.append(channel_max)
+    #channel_max_list.append(channel_max)
     energy_list_2.append(list_data[channel_max])
     data_left = channel_max - channel_width
     data_right = channel_max + channel_width
@@ -136,14 +138,27 @@ while i < len(energy_spectrum):
     pars['g1_amplitude'].set(max(gauss_y), min=max(gauss_y)-10)
     mod = mod + line_mod
     out  = mod.fit(y, pars, x=x)
+    center = out.params['g1_center'].value
+    center_std = out.params['g1_center'].stderr
+    channel_max_list.append(center)
+    channel_std_list.append(center_std)
     gauss_x = []; gauss_y = []; fit_channel = []
     #print(out.fit_report(min_correl=10))
     #for key in out.params:
     #    print(key, "=", out.params[key].value, "+/-", out.params[key].stderr)
 
 
+channel_number = sorted(channel_max_list, key=int)
+channel_std = sorted(channel_std_list, key=int)
 energy_channel = list(zip(channel_max_list, energy_list_2))
 energy_channel.sort(key=operator.itemgetter(0))
+
+for i, nrg, nrg_std, ch_std in zip(channel_number, energy_spectrum, energy_error_Ba133, channel_std):
+        percent_difference = slope*i + intercept
+        percent_diff = abs(nrg - percent_difference)/nrg * 100
+        error_sub = np.sqrt(nrg_std**2 + ch_std**2)
+        error = percent_diff*np.sqrt((error_sub/abs(nrg-percent_difference))**2 + (nrg_std/nrg)**2)
+        #print(percent_diff * 100)
 
 '''
 This sequence plots the energy of the peaks and with their corresponding
