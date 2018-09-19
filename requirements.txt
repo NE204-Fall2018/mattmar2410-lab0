@@ -12,3 +12,4 @@ setuptools
 six
 uncertainties
 lmfit
+statsmodels
