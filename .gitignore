@@ -17,3 +17,6 @@ lab0_spectral_data.*
 *.blg
 *.log
 *.pdf
+
+# Testing cruft
+.pytest_cache/*
